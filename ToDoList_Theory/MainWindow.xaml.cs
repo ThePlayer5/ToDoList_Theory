@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
+using System.Windows.Input; 
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -24,19 +24,31 @@ namespace ToDoList221
     public partial class MainWindow : Window
     {
         public ObservableCollection<TodoItem> Tasks { get; set; } = new ObservableCollection<TodoItem>();
+        public ObservableCollection<TodoItem> FilteredTasks { get; set; } = new ObservableCollection<TodoItem>();
         public MainWindow()
         {
             InitializeComponent();
-            TaskListLb.ItemsSource = Tasks;
+            TaskListLb.ItemsSource = FilteredTasks;
             UpdateCounter();
+            
         }
 
         private void AddTaskBtn_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(TaskInputTb.Text))
             {
-                Tasks.Add(new TodoItem { Title = TaskInputTb.Text, IsDone = false });
+                var selectedCategory = (CategoryComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                Tasks.Add(new TodoItem
+                {
+                    Title = TaskInputTb.Text,
+                    IsDone = false,
+                    DueDate = DueDatePicker.SelectedDate,
+                    Category = selectedCategory
+                });
                 TaskInputTb.Text = string.Empty;
+                DueDatePicker.SelectedDate = DateTime.Now;
+                CategoryComboBox.SelectedIndex = -1;
+                ApplyFilter();
                 UpdateCounter();
             }
         }
@@ -47,11 +59,13 @@ namespace ToDoList221
             {
                 Tasks.Remove(item);
                 UpdateCounter();
+                ApplyFilter();
             }
         }
         private void CheckBox_Changed(object sender, RoutedEventArgs e)
         {
             UpdateCounter();
+            ApplyFilter();
         }
         public void UpdateCounter()
         {
@@ -65,11 +79,51 @@ namespace ToDoList221
             }
             CounterTextTbl.Text = $"Осталось дел: {counter}";
         }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+        private void CategoryFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+        private void ApplyFilter()
+        {
+            var searchText = SearchTextBox.Text.ToLower();
+            var selectedCategory = (CategoryFilterComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            // 1. Фильтруем по загаловку
+            var filteredByTitle = Tasks.Where(task => task.Title != null && task.Title.Contains(searchText)).ToList();
+
+            // 2. Фильтруем по категории
+            List<TodoItem> finalFiltered;
+            if (string.IsNullOrEmpty(selectedCategory) || selectedCategory == "Все")
+                finalFiltered = filteredByTitle;
+            else
+                finalFiltered = filteredByTitle.Where(task => task.Category == selectedCategory).ToList();
+
+            FilteredTasks.Clear();
+            foreach(var task in finalFiltered)
+                FilteredTasks.Add(task);
+        }
+
+        private void DeleteCompletedBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var remaining = Tasks.Where(task => !task.IsDone).ToList();
+            Tasks.Clear();
+            foreach(var task in remaining)
+                Tasks.Add(task);
+            UpdateCounter();
+            ApplyFilter();
+        }
     }
     public class TodoItem
     {
         public string Title { get; set; }
         public bool IsDone { get; set; }
+        public DateTime? DueDate { get; set; } 
+        public string Category { get; set; }
     }
     public class DoneToTextDecorationConverter : IValueConverter
     {
