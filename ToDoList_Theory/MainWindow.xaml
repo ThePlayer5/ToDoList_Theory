@@ -1,9 +1,9 @@
-﻿<Window x:Class="ToDoList_Theory.MainWindow"
+﻿<Window x:Class="ToDoList221.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ToDoList_Theory"
+        xmlns:local="clr-namespace:ToDoList221"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
@@ -42,20 +42,19 @@
                         <TextBlock Text="{Binding Title}"
                                    VerticalAlignment="Center"
                                    TextDecorations="{Binding IsDone, Converter={StaticResource DoneToTextDecorationConverter}}"/>
-                        <Button Content="X"
+                        <Button Content="✕"
                                 DockPanel.Dock="Right"
                                 Margin="5"
                                 x:Name="DeleteTaskBtn"
                                 Click="DeleteTaskBtn_Click"/>
-
                     </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock x:Name="CounterTextTbl"
-                   Grid.Row="2"
-                   HorizontalAlignment="Right"
-                   FontWeight="Bold"
+        <TextBlock x:Name="CounterTextTbl" 
+                   Grid.Row="2" 
+                   HorizontalAlignment="Right" 
+                   FontWeight="Bold" 
                    Margin="0 10 0 0"/>
     </Grid>
 </Window>
