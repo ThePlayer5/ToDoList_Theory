@@ -103,8 +103,30 @@ namespace ToDoList221
             else
                 finalFiltered = filteredByTitle.Where(task => task.Category == selectedCategory).ToList();
 
+            // Сортировка
+
+            var selectedSort = (SortComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            switch (selectedSort)
+            {
+                case "По дате (по возрастанию)":
+                    finalFiltered = finalFiltered.OrderBy(task => task.DueDate).ToList();
+                    break;
+                case "По дате (по убыванию)":
+                    finalFiltered = finalFiltered.OrderByDescending(task => task.DueDate).ToList();
+                    break;
+                case "По статусу":
+                    finalFiltered = finalFiltered.OrderBy(task => task.IsDone).ToList();
+                    break;
+                case "По категории":
+                    finalFiltered = finalFiltered.OrderBy(task => task.Category).ToList();
+                    break;
+                case "Без сортировки":
+                default:
+                    break;
+            }
+
             FilteredTasks.Clear();
-            foreach(var task in finalFiltered)
+            foreach (var task in finalFiltered)
                 FilteredTasks.Add(task);
         }
 
@@ -115,6 +137,11 @@ namespace ToDoList221
             foreach(var task in remaining)
                 Tasks.Add(task);
             UpdateCounter();
+            ApplyFilter();
+        }
+
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
             ApplyFilter();
         }
     }
