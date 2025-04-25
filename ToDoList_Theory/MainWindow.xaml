@@ -6,7 +6,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:ToDoList221"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Icon="C:\Users\212301\Source\Repos\ToDoList_Theory\ToDoList_Theory\Images\shop_market_icon_264199.ico">
 
     <Window.Resources>
         <local:DoneToTextDecorationConverter x:Key="DoneToTextDecorationConverter"/>
